@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>PocketChord</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="start-overlay">
+    <button id="start-btn">
+      <span class="logo-big">PocketChord</span>
+      <span class="tap">TAP TO START</span>
+    </button>
+  </div>
+
+  <main class="device" aria-label="PocketChord instrument">
+    <header class="top">
+      <h1 class="logo">Pocket<span>Chord</span></h1>
+      <div class="lcd" role="status" aria-live="polite">
+        <div class="lcd-row">
+          <span id="lcd-key">C MAJOR</span>
+          <span id="lcd-bpm">♩=100</span>
+        </div>
+        <div class="lcd-chord" id="lcd-chord">––</div>
+        <div class="lcd-row">
+          <span id="lcd-flavor">TRIAD</span>
+          <span id="lcd-timbre">PAD</span>
+          <span id="lcd-loop">LOOP:STOP ·0</span>
+          <span class="beat-led" id="beat-led" aria-hidden="true"></span>
+        </div>
+      </div>
+    </header>
+
+    <section class="chord-grid" id="chord-grid" aria-label="Chord buttons"></section>
+
+    <section class="controls">
+      <div class="panel" aria-label="Key">
+        <span class="panel-label">KEY</span>
+        <div class="panel-body">
+          <select id="root-select" aria-label="Root note">
+            <option value="0" selected>C</option>
+            <option value="1">D♭</option>
+            <option value="2">D</option>
+            <option value="3">E♭</option>
+            <option value="4">E</option>
+            <option value="5">F</option>
+            <option value="6">F♯</option>
+            <option value="7">G</option>
+            <option value="8">A♭</option>
+            <option value="9">A</option>
+            <option value="10">B♭</option>
+            <option value="11">B</option>
+          </select>
+          <button id="mode-toggle" class="switch" aria-label="Toggle major/minor">MAJOR</button>
+        </div>
+      </div>
+
+      <div class="panel" aria-label="Chord flavor">
+        <span class="panel-label">TINTA <kbd>1–4</kbd></span>
+        <div class="panel-body">
+          <button class="switch" data-flavor="triad" aria-pressed="true">TRIAD</button>
+          <button class="switch" data-flavor="seventh" aria-pressed="false">7TH</button>
+          <button class="switch" data-flavor="sus" aria-pressed="false">SUS</button>
+          <button class="switch" data-flavor="add9" aria-pressed="false">ADD9</button>
+        </div>
+      </div>
+
+      <div class="panel" aria-label="Timbre">
+        <span class="panel-label">VOICE</span>
+        <div class="panel-body">
+          <button class="switch" data-timbre="pad" aria-pressed="true">PAD</button>
+          <button class="switch" data-timbre="organ" aria-pressed="false">ORGAN</button>
+          <button class="switch" data-timbre="pluck" aria-pressed="false">PLUCK</button>
+        </div>
+      </div>
+
+      <div class="panel" aria-label="Effects and tempo">
+        <span class="panel-label">FX / TEMPO</span>
+        <div class="panel-body">
+          <button id="fx-reverb" class="switch" aria-pressed="true">REV</button>
+          <button id="fx-delay" class="switch" aria-pressed="true">DLY</button>
+          <button id="fx-metro" class="switch" aria-pressed="false">CLICK</button>
+          <label class="bpm">
+            <input type="range" id="bpm-range" min="60" max="180" value="100" step="1"
+                   aria-label="Tempo in BPM" />
+            <span id="bpm-value">100</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="panel loop-panel" aria-label="Looper">
+        <span class="panel-label">LOOPER</span>
+        <div class="panel-body">
+          <button id="loop-rec" class="switch rec" aria-pressed="false">● REC</button>
+          <button id="loop-play" class="switch" aria-pressed="false">▶ PLAY</button>
+          <button id="loop-clear" class="switch">✕ CLEAR</button>
+          <select id="bars-select" aria-label="Loop length in bars">
+            <option value="2">2 BARS</option>
+            <option value="4" selected>4 BARS</option>
+            <option value="8">8 BARS</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <footer class="hint">KEYS A S D F G H J → CHORDS · 1 2 3 4 → TINTA</footer>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
