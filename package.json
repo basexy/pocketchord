@@ -4,7 +4,7 @@
   "description": "Browser chord instrument with looper, inspired by HiChord",
   "type": "module",
   "scripts": {
-    "test": "node tests/chords.test.mjs",
+    "test": "node tests/chords.test.mjs && node tests/song.test.mjs",
     "start": "python3 -m http.server 8080"
   },
   "devDependencies": {

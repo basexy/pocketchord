@@ -32,7 +32,21 @@
       </div>
     </header>
 
-    <section class="chord-grid" id="chord-grid" aria-label="Chord buttons"></section>
+    <div class="workspace">
+      <div class="left-col">
+        <section class="chord-grid" id="chord-grid" aria-label="Chord buttons"></section>
+      </div>
+
+      <aside class="drum-side">
+        <div class="panel drum-panel" aria-label="Drum machine">
+          <div class="drum-head">
+            <span class="panel-label">DRUM MACHINE · 16 STEP</span>
+            <button id="drum-clear" class="switch mini">✕ CLEAR</button>
+          </div>
+          <div id="drum-grid" class="drum-grid" role="grid" aria-label="Drum step grid"></div>
+        </div>
+      </aside>
+    </div>
 
     <section class="controls">
       <div class="panel" aria-label="Key">
@@ -104,7 +118,21 @@
       </div>
     </section>
 
-    <footer class="hint">KEYS A S D F G H J → CHORDS · 1 2 3 4 → TINTA</footer>
+    <section class="panel songview" aria-label="Song builder">
+      <div class="song-head">
+        <span class="panel-label">SONG · PATTERNS</span>
+        <button id="pat-save" class="switch mini">＋ SAVE PATTERN</button>
+        <div id="pattern-list" class="pattern-list"></div>
+        <span class="song-spacer"></span>
+        <button id="song-play" class="switch mini">▶ SONG</button>
+        <button id="song-clear" class="switch mini">✕ SONG</button>
+      </div>
+      <div class="playlist-wrap">
+        <div id="playlist" class="playlist" role="grid" aria-label="Song playlist"></div>
+      </div>
+    </section>
+
+    <footer class="hint">KEYS A S D F G H J → CHORDS · 1 2 3 4 → TINTA · SAVE PATTERN → CLICK PLAYLIST → ▶ SONG</footer>
   </main>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
