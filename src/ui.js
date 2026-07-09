@@ -1,8 +1,5 @@
 // ui.js — DOM rendering, input wiring (pointer + QWERTY), visual feedback.
 
-import { DRUM_ROWS, STEPS } from './drums.js';
-import { TRACKS, SONG_BARS, clipAt, patternById } from './song.js';
-
 const DEGREE_KEYS = ['KeyA', 'KeyS', 'KeyD', 'KeyF', 'KeyG', 'KeyH', 'KeyJ'];
 const FLAVOR_KEYS = { Digit1: 'triad', Digit2: 'seventh', Digit3: 'sus', Digit4: 'add9' };
 const KEY_HINTS = ['A', 'S', 'D', 'F', 'G', 'H', 'J'];
@@ -34,17 +31,9 @@ export class UI {
       rec: document.getElementById('loop-rec'),
       play: document.getElementById('loop-play'),
       clear: document.getElementById('loop-clear'),
-      drumGrid: document.getElementById('drum-grid'),
-      patternList: document.getElementById('pattern-list'),
-      playlist: document.getElementById('playlist'),
-      songPlay: document.getElementById('song-play'),
     };
     this.degreeButtons = [];
-    this.drumCells = [];
-    this._drumStep = -1;
-    this._playheadBar = -1;
     this._buildGrid();
-    this._buildDrumGrid();
     this._wire();
   }
 
@@ -81,34 +70,9 @@ export class UI {
     }
   }
 
-  _buildDrumGrid() {
-    DRUM_ROWS.forEach((row, r) => {
-      const label = document.createElement('span');
-      label.className = 'drum-label';
-      label.textContent = row.label;
-      this.el.drumGrid.appendChild(label);
-
-      const cells = [];
-      for (let s = 0; s < STEPS; s++) {
-        const cell = document.createElement('button');
-        cell.className = `drum-cell${Math.floor(s / 4) % 2 ? ' alt' : ''}`;
-        cell.setAttribute('aria-label', `${row.label} step ${s + 1}`);
-        cell.addEventListener('click', () => this.h.drumToggle(r, s));
-        this.el.drumGrid.appendChild(cell);
-        cells.push(cell);
-      }
-      this.drumCells.push(cells);
-    });
-  }
-
   _wire() {
     const h = this.h;
     this.el.startBtn.addEventListener('click', () => h.start());
-
-    document.getElementById('drum-clear').addEventListener('click', () => h.drumClear());
-    document.getElementById('pat-save').addEventListener('click', () => h.patSave());
-    this.el.songPlay.addEventListener('click', () => h.songPlayStop());
-    document.getElementById('song-clear').addEventListener('click', () => h.songClear());
 
     this.el.root.addEventListener('change', (e) => h.setRoot(Number(e.target.value)));
     this.el.mode.addEventListener('click', () => h.setMode());
@@ -196,111 +160,7 @@ export class UI {
     this.el.mode.textContent = mode === 'major' ? 'MAJOR' : 'MINOR';
   }
 
-  /* ---------- drum machine ---------- */
-
-  setDrumCell(row, step, on) {
-    this.drumCells[row][step].classList.toggle('on', on);
-  }
-
-  setDrumGrid(grid) {
-    grid.forEach((row, r) => row.forEach((on, s) => this.setDrumCell(r, s, on)));
-  }
-
-  drumPlayhead(step) {
-    if (step === this._drumStep) return;
-    for (const cells of this.drumCells) {
-      if (this._drumStep >= 0) cells[this._drumStep].classList.remove('ph');
-      if (step >= 0) cells[step].classList.add('ph');
-    }
-    this._drumStep = step;
-  }
-
-  /* ---------- song view ---------- */
-
-  /** Full re-render of pattern chips + playlist grid. */
-  renderSong({ patterns, clips, selectedId }) {
-    const list = this.el.patternList;
-    list.innerHTML = '';
-    if (patterns.length === 0) {
-      const empty = document.createElement('span');
-      empty.className = 'pat-empty';
-      empty.textContent = 'no patterns yet';
-      list.appendChild(empty);
-    }
-    for (const p of patterns) {
-      const chip = document.createElement('button');
-      chip.className = `pat-chip pat-c${p.color}${p.id === selectedId ? ' selected' : ''}`;
-      chip.innerHTML = `<span>${p.name}</span><span class="pat-len">${p.bars}b</span>` +
-        '<span class="pat-del" aria-label="delete">✕</span>';
-      chip.addEventListener('click', (e) => {
-        if (e.target.classList.contains('pat-del')) this.h.patDelete(p.id);
-        else this.h.patSelect(p.id);
-      });
-      list.appendChild(chip);
-    }
-
-    const pl = this.el.playlist;
-    pl.innerHTML = '';
-    pl.style.gridTemplateColumns = `44px repeat(${SONG_BARS}, minmax(24px, 1fr))`;
-
-    // header row: bar numbers every 4 bars
-    const corner = document.createElement('span');
-    corner.className = 'pl-label pl-head';
-    pl.appendChild(corner);
-    for (let b = 0; b < SONG_BARS; b++) {
-      const n = document.createElement('span');
-      n.className = `pl-head${b % 4 === 0 ? ' q' : ''}`;
-      n.dataset.bar = b;
-      n.textContent = b % 4 === 0 ? b + 1 : '';
-      pl.appendChild(n);
-    }
-
-    for (let t = 0; t < TRACKS; t++) {
-      const label = document.createElement('span');
-      label.className = 'pl-label';
-      label.textContent = `TR ${t + 1}`;
-      pl.appendChild(label);
-
-      for (let b = 0; b < SONG_BARS; b++) {
-        const cell = document.createElement('button');
-        const clip = clipAt(clips, patterns, t, b);
-        cell.className = `pl-cell${b % 4 === 0 ? ' q' : ''}`;
-        cell.dataset.bar = b;
-        if (clip) {
-          const p = patternById(patterns, clip.patternId);
-          cell.classList.add('clip', `pat-c${p.color}`);
-          if (b === clip.startBar) {
-            cell.classList.add('clip-start');
-            cell.textContent = p.name;
-          }
-          if (b === clip.startBar + p.bars - 1) cell.classList.add('clip-end');
-          cell.setAttribute('aria-label', `Track ${t + 1} bar ${b + 1}: ${p.name}`);
-        } else {
-          cell.setAttribute('aria-label', `Track ${t + 1} bar ${b + 1}: empty`);
-        }
-        cell.addEventListener('click', () => this.h.cellToggle(t, b));
-        pl.appendChild(cell);
-      }
-    }
-    this._playheadBar = -1;
-  }
-
-  /** Highlight the current bar column while the song plays (-1 clears). */
-  setPlayhead(bar) {
-    if (bar === this._playheadBar) return;
-    this.el.playlist.querySelectorAll('[data-bar]').forEach((el) => {
-      el.classList.toggle('ph', Number(el.dataset.bar) === bar);
-    });
-    this._playheadBar = bar;
-  }
-
-  updateSongMode(songMode, playing) {
-    this.el.songPlay.textContent = songMode && playing ? '■ STOP' : '▶ SONG';
-    this.el.songPlay.setAttribute('aria-pressed', String(songMode && playing));
-  }
-
-  updateLoop({ recording, playing, eventCount, beat, songMode, bars }) {
-    if (bars !== undefined) this.el.bars.value = String(bars);
+  updateLoop({ recording, playing, eventCount, beat }) {
     if (recording !== undefined) {
       this.el.rec.classList.toggle('recording', recording);
       this.el.rec.setAttribute('aria-pressed', String(recording));
@@ -310,9 +170,7 @@ export class UI {
       this.el.play.setAttribute('aria-pressed', String(playing));
     }
     const state = recording ? 'REC' : playing ? 'PLAY' : 'STOP';
-    this.el.lcdLoop.textContent = songMode
-      ? `SONG:${state}`
-      : `LOOP:${state} ·${eventCount ?? 0}`;
+    this.el.lcdLoop.textContent = `LOOP:${state} ·${eventCount ?? 0}`;
     if (beat !== undefined) {
       this.el.beatLed.classList.toggle('on', beat >= 0);
       this.el.beatLed.classList.toggle('accent', beat === 0);

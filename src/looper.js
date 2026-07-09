@@ -58,26 +58,11 @@ export class Looper {
   }
 
   clear() {
-    this.unschedule();
+    for (const id of this.eventIds) Tone.Transport.clear(id);
+    this.eventIds = [];
     this.events = [];
     this.held.clear();
     this._notify();
-  }
-
-  /** Remove all transport schedules but keep the events (song mode takes over). */
-  unschedule() {
-    for (const id of this.eventIds) Tone.Transport.clear(id);
-    this.eventIds = [];
-  }
-
-  /** Re-arm the stored events on the transport (back to pattern mode). */
-  reschedule() {
-    this.unschedule();
-    for (const event of this.events) this._schedule(event);
-  }
-
-  getEvents() {
-    return this.events.map((e) => ({ ...e, notes: [...e.notes] }));
   }
 
   /** Capture a chord press (live sound is triggered by the UI, not here). */
@@ -115,11 +100,9 @@ export class Looper {
   }
 
   _onBeat(time) {
-    const quarters = Math.round(Tone.Transport.getTicksAtTime(time) / Tone.Transport.PPQ);
-    const beat = quarters % 4;
-    const bar = Math.floor(quarters / 4);
+    const beat = Math.round(Tone.Transport.getTicksAtTime(time) / Tone.Transport.PPQ) % 4;
     this.audio.click(beat === 0, time);
-    Tone.Draw.schedule(() => this._notify({ beat, bar }), time);
+    Tone.Draw.schedule(() => this._notify({ beat }), time);
   }
 
   _notify(extra = {}) {

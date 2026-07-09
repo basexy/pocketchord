@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>TH·Studio — tech house workstation</title>
+  <link rel="stylesheet" href="studio.css" />
+</head>
+<body>
+  <div id="start-overlay">
+    <button id="start-btn">
+      <span class="logo-big">TH·STUDIO</span>
+      <span class="tap">TAP TO START</span>
+    </button>
+  </div>
+
+  <header class="topbar">
+    <h1 class="logo">TH·<span>STUDIO</span></h1>
+    <button id="play-btn" class="switch play">▶ PLAY</button>
+    <label class="knob">
+      <span>BPM</span>
+      <input type="range" id="bpm-range" min="118" max="134" value="126" step="1"
+             aria-label="Tempo in BPM" />
+      <span id="bpm-value" class="knob-value">126</span>
+    </label>
+    <label class="knob">
+      <span>SWING</span>
+      <input type="range" id="swing-range" min="0" max="60" value="12" step="1"
+             aria-label="Swing amount" />
+      <span id="swing-value" class="knob-value">12%</span>
+    </label>
+    <label class="knob key">
+      <span>KEY</span>
+      <select id="key-select" aria-label="Key (minor)">
+        <option value="0">Cm</option>
+        <option value="1">C♯m</option>
+        <option value="2">Dm</option>
+        <option value="3">E♭m</option>
+        <option value="4">Em</option>
+        <option value="5" selected>Fm</option>
+        <option value="6">F♯m</option>
+        <option value="7">Gm</option>
+        <option value="8">A♭m</option>
+        <option value="9">Am</option>
+        <option value="10">B♭m</option>
+        <option value="11">Bm</option>
+      </select>
+    </label>
+    <a class="page-link" href="index.html">← POCKETCHORD</a>
+  </header>
+
+  <main class="rack">
+    <section class="dev dev-drums" aria-label="Drum machine">
+      <div class="dev-head">
+        <span class="dev-label">DRUMS · 909</span>
+        <button id="drum-clear" class="switch mini">✕ CLEAR</button>
+      </div>
+      <div id="drum-grid" class="step-grid" role="grid" aria-label="Drum step grid"></div>
+    </section>
+
+    <section class="dev dev-bass" aria-label="Bassline synth">
+      <div class="dev-head">
+        <span class="dev-label">BASSLINE · 303</span>
+        <button id="bass-clear" class="switch mini">✕ CLEAR</button>
+      </div>
+      <div id="bass-roll" class="step-grid" role="grid" aria-label="Bass note grid"></div>
+      <div id="bass-acc" class="step-grid flag-grid" role="grid" aria-label="Bass accents"></div>
+      <div id="bass-sld" class="step-grid flag-grid" role="grid" aria-label="Bass slides"></div>
+      <div class="dev-controls">
+        <label class="knob">
+          <span>CUTOFF</span>
+          <input type="range" id="cutoff-range" min="120" max="2600" value="380" step="10"
+                 aria-label="Filter cutoff" />
+        </label>
+        <label class="knob">
+          <span>RES</span>
+          <input type="range" id="res-range" min="0" max="14" value="6" step="0.5"
+                 aria-label="Filter resonance" />
+        </label>
+      </div>
+    </section>
+
+    <section class="dev dev-stabs" aria-label="Chord stabs">
+      <div class="dev-head">
+        <span class="dev-label">STABS</span>
+        <button id="stab-clear" class="switch mini">✕ CLEAR</button>
+      </div>
+      <div id="stab-row" class="step-grid" role="grid" aria-label="Stab step row"></div>
+      <div class="dev-controls">
+        <label class="knob key">
+          <span>CHORD</span>
+          <select id="stab-chord" aria-label="Stab chord type"></select>
+        </label>
+        <label class="knob">
+          <span>TONE</span>
+          <input type="range" id="tone-range" min="500" max="6000" value="2400" step="50"
+                 aria-label="Stab filter tone" />
+        </label>
+      </div>
+    </section>
+
+    <section class="dev dev-fx" aria-label="Performance FX">
+      <div class="dev-head">
+        <span class="dev-label">FX</span>
+      </div>
+      <div class="dev-controls fx-controls">
+        <label class="knob sweep">
+          <span>LP ◂ SWEEP ▸ HP</span>
+          <input type="range" id="sweep-range" min="-100" max="100" value="0" step="1"
+                 aria-label="Master filter sweep (double-click to reset)" />
+        </label>
+        <button id="riser-btn" class="switch riser">▲ RISER (HOLD)</button>
+        <button id="fx-delay" class="switch" aria-pressed="true">DLY</button>
+        <button id="fx-reverb" class="switch" aria-pressed="true">REV</button>
+      </div>
+      <p class="fx-hint">sweep: double-click to reset · riser: hold to build</p>
+    </section>
+  </main>
+
+  <footer class="dock" id="dock">
+    <div class="dock-bar">
+      <button id="dock-toggle" class="switch mini">▸ SONG</button>
+      <span id="dock-info" class="dock-info">0 PAT · 1 BARS</span>
+      <span class="dock-spacer"></span>
+      <button id="pat-save" class="switch mini">＋ SAVE PATTERN</button>
+      <button id="song-play" class="switch mini">▶ SONG</button>
+      <button id="song-clear" class="switch mini">✕</button>
+    </div>
+    <div class="dock-body" id="dock-body" hidden>
+      <div id="pattern-list" class="pattern-list"></div>
+      <div class="playlist-wrap">
+        <div id="playlist" class="playlist" role="grid" aria-label="Song playlist"></div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+  <script type="module" src="src/studio/main.js"></script>
+</body>
+</html>

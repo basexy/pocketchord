@@ -1,0 +1,292 @@
+/* TH·Studio — dark club take on the PocketChord hardware look.
+   Accent per device: drums orange, bass acid green, stabs cyan, fx magenta. */
+
+:root {
+  --bg: #121110;
+  --panel: #1e1c1a;
+  --panel-2: #262320;
+  --edge: #050505;
+  --ink: #e8e2d4;
+  --dim: #8d8574;
+  --orange: #ff6b1a;
+  --acid: #a4e22e;
+  --cyan: #3fd0c9;
+  --magenta: #e0569e;
+  --cell: #2e2b27;
+  --cell-alt: #383430;
+  font-size: 16px;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; min-height: 100%; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  padding: 14px 14px 64px; /* room for the collapsed dock */
+  -webkit-user-select: none;
+  user-select: none;
+}
+body.dock-open { padding-bottom: 46vh; }
+
+/* ---------- start overlay ---------- */
+
+#start-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s;
+}
+#start-overlay.hidden { opacity: 0; pointer-events: none; }
+#start-btn {
+  background: var(--panel);
+  color: var(--ink);
+  border: 3px solid var(--edge);
+  border-radius: 18px;
+  padding: 40px 56px;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 10px 0 var(--edge), 0 0 60px rgba(255, 107, 26, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+}
+#start-btn:active { transform: translateY(4px); box-shadow: 0 6px 0 var(--edge); }
+#start-btn .logo-big { font-size: 1.8rem; font-weight: 700; letter-spacing: 0.08em; }
+#start-btn .tap { font-size: 0.9rem; color: var(--orange); animation: pulse 1.4s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: 0.35; } }
+
+/* ---------- top bar ---------- */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  background: var(--panel);
+  border: 2px solid var(--edge);
+  border-radius: 12px;
+  padding: 8px 14px;
+  margin-bottom: 14px;
+}
+.logo { margin: 0; font-size: 1rem; letter-spacing: 0.06em; }
+.logo span { color: var(--orange); }
+.page-link {
+  margin-left: auto;
+  color: var(--dim);
+  text-decoration: none;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+}
+.page-link:hover { color: var(--ink); }
+
+/* ---------- shared controls ---------- */
+
+.switch, select {
+  font-family: inherit;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  background: var(--panel-2);
+  color: var(--ink);
+  border: 2px solid var(--edge);
+  border-radius: 8px;
+  padding: 7px 10px;
+  cursor: pointer;
+  box-shadow: 0 3px 0 var(--edge);
+  min-height: 38px;
+}
+.switch:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--edge); }
+.switch[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.switch.mini { font-size: 0.62rem; padding: 4px 8px; min-height: 28px; box-shadow: 0 2px 0 var(--edge); }
+.switch.play[aria-pressed="true"] { background: var(--orange); color: #1d0d00; }
+.switch.riser { color: var(--magenta); }
+.switch.riser:active { background: var(--magenta); color: #fff; }
+
+.knob {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  color: var(--dim);
+}
+.knob input[type="range"] { width: 110px; accent-color: var(--orange); }
+.knob-value { color: var(--ink); min-width: 3.5ch; font-size: 0.72rem; }
+
+/* ---------- rack of devices ---------- */
+
+.rack {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.dev {
+  background: var(--panel);
+  border: 2px solid var(--edge);
+  border-radius: 14px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 6px 0 var(--edge);
+}
+.dev-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.dev-label { font-size: 0.62rem; letter-spacing: 0.16em; color: var(--dim); }
+.dev-controls { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+
+.dev-drums { border-top: 3px solid var(--orange); }
+.dev-bass { border-top: 3px solid var(--acid); }
+.dev-stabs { border-top: 3px solid var(--cyan); }
+.dev-fx { border-top: 3px solid var(--magenta); }
+
+/* ---------- step grids ---------- */
+
+.step-grid {
+  display: grid;
+  grid-template-columns: 38px repeat(16, 1fr);
+  gap: 3px;
+}
+.cell-label {
+  font-size: 0.55rem;
+  letter-spacing: 0.06em;
+  color: var(--dim);
+  align-self: center;
+}
+.cell {
+  aspect-ratio: 1;
+  min-width: 0;
+  padding: 0;
+  border: 1px solid var(--edge);
+  border-radius: 4px;
+  background: var(--cell);
+  cursor: pointer;
+}
+.cell.alt { background: var(--cell-alt); }
+.cell.ph { box-shadow: inset 0 0 0 2px rgba(232, 226, 212, 0.35); }
+
+.dev-drums .cell.on { background: var(--orange); box-shadow: 0 0 8px rgba(255, 107, 26, 0.5); }
+.dev-bass .cell.bass.on { background: var(--acid); box-shadow: 0 0 8px rgba(164, 226, 46, 0.5); }
+.dev-stabs .cell.on { background: var(--cyan); box-shadow: 0 0 8px rgba(63, 208, 201, 0.5); }
+
+.flag-grid .cell { aspect-ratio: auto; height: 14px; border-radius: 3px; }
+.cell.acc.on { background: #ffd23d; }
+.cell.sld.on { background: #7fb2ff; }
+
+.dev-bass .cell.on.ph, .dev-drums .cell.on.ph, .dev-stabs .cell.on.ph { filter: brightness(1.3); }
+
+.fx-controls { flex: 1; align-content: center; }
+.fx-controls .sweep input[type="range"] { width: 200px; accent-color: var(--magenta); }
+.fx-hint { margin: 0; font-size: 0.58rem; color: var(--dim); letter-spacing: 0.06em; }
+
+/* ---------- bottom song dock ---------- */
+
+.dock {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  background: var(--panel);
+  border-top: 2px solid var(--edge);
+  box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.5);
+}
+.dock-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 14px;
+}
+.dock-info { font-size: 0.6rem; letter-spacing: 0.1em; color: var(--dim); }
+.dock-spacer { flex: 1; }
+
+.dock-body[hidden] { display: none; }
+.dock-body {
+  border-top: 1px solid #38342f;
+  padding: 10px 14px 14px;
+  max-height: 38vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pattern-list { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; min-height: 28px; }
+.pat-empty { font-size: 0.6rem; letter-spacing: 0.08em; color: var(--dim); }
+
+.pat-c0 { --pat: #ff8a3d; }
+.pat-c1 { --pat: #a4e22e; }
+.pat-c2 { --pat: #3fd0c9; }
+.pat-c3 { --pat: #e0569e; }
+.pat-c4 { --pat: #ffd23d; }
+.pat-c5 { --pat: #7fb2ff; }
+
+.pat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: inherit;
+  font-size: 0.66rem;
+  background: var(--panel-2);
+  color: var(--ink);
+  border: 2px solid var(--edge);
+  border-left: 8px solid var(--pat, var(--edge));
+  border-radius: 8px;
+  padding: 4px 8px;
+  box-shadow: 0 2px 0 var(--edge);
+  cursor: pointer;
+}
+.pat-chip.selected { background: var(--ink); color: var(--bg); }
+.pat-chip .pat-del { opacity: 0.45; }
+.pat-chip .pat-del:hover { opacity: 1; color: #ff4b3e; }
+
+.playlist-wrap { overflow-x: auto; }
+.playlist { display: grid; gap: 2px; grid-auto-rows: 24px; min-width: 780px; }
+
+.pl-head { font-size: 0.52rem; color: var(--dim); align-self: end; min-width: 0; }
+.pl-head.ph { color: var(--orange); font-weight: 700; }
+.pl-label { font-size: 0.56rem; letter-spacing: 0.06em; color: var(--dim); align-self: center; }
+
+.pl-cell {
+  min-width: 0;
+  padding: 0;
+  font-family: inherit;
+  font-size: 0.52rem;
+  font-weight: 700;
+  color: #14100c;
+  background: var(--cell);
+  border: 1px solid #3c3833;
+  border-radius: 3px;
+  cursor: pointer;
+  overflow: hidden;
+  white-space: nowrap;
+  touch-action: none;
+}
+.pl-cell.q { border-left-color: var(--dim); }
+.pl-cell.clip { background: var(--pat); border-color: var(--edge); }
+.pl-cell.ph { box-shadow: inset 0 0 0 2px var(--orange); }
+
+/* ---------- focus & responsive ---------- */
+
+button:focus-visible, select:focus-visible, input:focus-visible {
+  outline: 3px solid var(--orange);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+
+@media (max-width: 900px) {
+  .rack { grid-template-columns: 1fr; }
+  .knob input[type="range"] { width: 80px; }
+}
